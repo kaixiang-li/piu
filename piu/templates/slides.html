@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+<body>
+
+  % for i, text in enumerate(texts):
+  <p class="slide">
+  <img src="${prefix}${i}" alt="${text}" /> 
+  </p> 
+  % endfor
+
+</body>
+</html>

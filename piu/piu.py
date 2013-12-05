@@ -5,6 +5,7 @@ import os
 import PyPDF2
 from PyPDF2.pdf import ContentStream
 from PyPDF2.pdf import TextStringObject
+from mako.template import Template
 
 
 class Piu(object):
@@ -121,16 +122,14 @@ class Piu(object):
             relative_path = "%s/" % output
             self._create_index(prefix=relative_path)
 
-    def _create_index(self, filename="index.html", prefix=""):
-        SLIDE_TEMPLATE = u'<p class="slide"><img src="{prefix}{src}" alt="{alt}" /></p>'
-        out = open(filename, "wt")
-
+    def _create_index(self, filename="index.html", prefix="", template=""):
+        html = ""
+        if not template:
+            template = os.path.join(os.path.abspath(os.path.dirname(__file__)), "templates/slides.html")
         texts = self.text()
-        print >> out, "<!doctype html>"
-        for i in xrange(0, len(texts)):
-            alt = texts[i]  # ALT text for this slide
-            params = dict(src=u"slide%d.jpg" % (i + 1), prefix=prefix, alt=alt)
-            line = SLIDE_TEMPLATE.format(**params)
-            print >> out, line.encode("utf-8")
+        with open(template, "rb") as f:
+            template = f.read()
+            html += Template(template).render(texts=texts, prefix=prefix)
 
-        out.close()
+        with open(filename, "wt") as f:
+            f.write(html)
